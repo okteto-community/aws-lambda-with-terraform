@@ -102,7 +102,7 @@ resource "aws_api_gateway_integration" "lambda_integration" {
 resource "aws_api_gateway_deployment" "lambda_deployment" {
   depends_on = [aws_api_gateway_integration.lambda_integration]
   rest_api_id = aws_api_gateway_rest_api.my_api.id
-  stage_name = "Prod"
+  stage_name = "Dev"
 }
 
 # Lambda permission to allow API Gateway to invoke the function
@@ -117,6 +117,6 @@ resource "aws_lambda_permission" "allow_apigw" {
 # Output the API Gateway URL
 output "lambda_function_url" {
   description = "URL for the Lambda function"
-  value       = "https://${aws_api_gateway_rest_api.my_api.id}.execute-api.${var.region}.amazonaws.com/Prod/hello"
+  value       = "https://${aws_api_gateway_rest_api.my_api.id}.execute-api.${var.region}.amazonaws.com/Dev/hello"
 }
 
