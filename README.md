@@ -60,6 +60,8 @@ In the `main.tf` file, we define the AWS resources that work together to deploy 
 
 1. Okteto allows you to deploy and manage serverless functions as external resources, providing a seamless development experience. You don't have to configure access to an AWS account for each developer and manage hacky solutions to provision Lambda Functions for developers when they need them during development.
 
+1. Okteto gives you full control of the lifecycle of the AWS resources. When developers on your team delete the dev environment (or [Okteto's Garbage Collector](https://www.okteto.com/docs/admin/cleanup/) does it automatically for you after it's not in use), the AWS resources are also cleaned up!
+
 1. Terraform gives you full control over the AWS resources you want to provision, making it a versatile tool for defining infrastructure as code.
 
 1. By combining Okteto with Terraform, developers can easily develop applications which require Lambda functions, without needing to manually configure the AWS infrastructure.
