@@ -31,6 +31,11 @@ variable "region" {
   default     = "us-west-1"
 }
 
+locals {
+    timestamp = formatdate("YYYYMMDDhhmmss", timestamp())
+    zip_file_name = "/tmp/my_lambda_${local.timestamp}.zip"
+}
+
 # IAM role for Lambda
 resource "aws_iam_role" "lambda_exec_role" {
   name = "${var.lambda_function_name}-exec-role"
@@ -47,21 +52,30 @@ resource "aws_iam_role" "lambda_exec_role" {
       }
     ]
   })
-
-  managed_policy_arns = [
-    "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-  ]
 }
 
-# Lambda Function
+# attach the official AWS Lambda Execute policy to the role
+resource "aws_iam_role_policy_attachment" "lambda_exec_role_attachment" {
+  role       = aws_iam_role.lambda_exec_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+# zip the code for the Lambda function
+data "archive_file" "my_lambda_zip" {
+  type = "zip"
+  source_file = "app.py"
+  output_path = local.zip_file_name
+}
+
+# Deploy the Lambda Function
 resource "aws_lambda_function" "my_lambda" {
   function_name = var.lambda_function_name
   role          = aws_iam_role.lambda_exec_role.arn
   handler       = "app.lambda_handler"
   runtime       = "python3.9"
 
-  filename = "lambda_function.zip"  
-  source_code_hash = filebase64sha256("lambda_function.zip")  # Ensures code update detection
+  filename = data.archive_file.my_lambda_zip.output_path
+  source_code_hash = data.archive_file.my_lambda_zip.output_base64sha256  # Ensures code update detection
 
   timeout = 100
   memory_size = 128
