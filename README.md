@@ -2,19 +2,13 @@
 
 This guide and sample app are meant to show how you can deploy [AWS Lambda Functions](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html) as [External Resources](https://www.okteto.com/docs/tutorials/external-resources/) on [Okteto](https://www.okteto.com/) with the help of [Terraform](https://www.terraform.io/).
 
-We also have a sample on how to do this with the [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam-overview.html) on [our website](https://www.okteto.com/docs/tutorials/aws-lambda/) if you'd prefer that method.
+If you'd prefer that method, we also have a sample on how to do this with the [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/what-is-sam-overview.html) on [our website](https://www.okteto.com/docs/tutorials/aws-lambda/).
 
 This sample deploys a Lambda function that’s a simple Python function, which is triggered via an HTTP request. The function is exposed via [API Gateway](https://aws.amazon.com/api-gateway/), which serves as the entry point for requests. The deployed function listens at the `/hello` endpoint and responds with a message: `"Hello from Lambda!"`.
 
 ## Steps To Run This
 
-1.  Before deploying, you’ll need to package the `app.py` file into a zip archive (`lambda_function.zip`). This ensures the function can be properly deployed to AWS Lambda. You'll already find the `zip` file in this repo, but if you'd like to change the function, please create a new `zip` file by running:
-
-    ```bash
-    zip lambda_function.zip app.py
-    ```
-
-1.  Configure [Cloud Credentials](https://www.okteto.com/docs/admin/cloud-credentials/aws-cloud-credentials/) so that Okteto can create resources in your AWS account. Make sure to give the following permissions to the [IAM role you create](https://www.okteto.com/docs/admin/cloud-credentials/aws-cloud-credentials/#step-2-create-the-iam-role-and-grant-access-to-s3) during the Cloud Credentials setup:
+1.  Configure [Cloud Credentials](https://www.okteto.com/docs/admin/cloud-credentials/aws-cloud-credentials/) so that Okteto can create resources in your AWS account. Make sure to give the following permissions to the [IAM role you create](https://www.okteto.com/docs/admin/cloud-credentials/aws-cloud-credentials/#step-2-create-the-iam-role-and-grant-access-to-s3) during the Cloud Credentials setup. This will enable every developer on your team to create AWS Lambda functions without requiring personal credentials.
 
     - AWSCloudFormationFullAccess
     - IAMFullAccess
@@ -22,7 +16,7 @@ This sample deploys a Lambda function that’s a simple Python function, which i
     - AmazonAPIGatewayAdministrator
     - AmazonS3FullAccess
 
-1.  Run `okteto deploy` to spin up your development environment as part of which the lambda function and all the necessary resources would be created for your developers automatically.
+1.  Run `okteto deploy` to spin up your development environment as part of which the lambda function and all the necessary resources would automatically be created for your developers.
 
 ## How It Works
 
@@ -51,7 +45,7 @@ In the `main.tf` file, we define the AWS resources that work together to deploy 
    Purpose: This "deploys" your API Gateway to a specific stage (in this case, Dev), making it live and accessible to external users.
 1. Lambda Permission for API Gateway
    Resource: `aws_lambda_permission`
-   Purpose: This grants API Gateway the permission to invoke your Lambda function. Without this, API Gateway wouldn't have the rights to trigger the Lambda.
+   Purpose: This grants API Gateway permission to invoke your Lambda function. Without this, API Gateway wouldn't have the rights to trigger the Lambda.
 1. Output (API Gateway URL)
    Resource: `output`
    Purpose: This provides the URL that you can use to access the Lambda function via API Gateway.
@@ -64,4 +58,4 @@ In the `main.tf` file, we define the AWS resources that work together to deploy 
 
 1. Terraform gives you full control over the AWS resources you want to provision, making it a versatile tool for defining infrastructure as code.
 
-1. By combining Okteto with Terraform, developers can easily develop applications which require Lambda functions, without needing to manually configure the AWS infrastructure.
+1. By combining Okteto with Terraform, developers can easily develop applications that require Lambda functions without needing to configure the AWS infrastructure manually.
